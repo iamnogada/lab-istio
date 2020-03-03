@@ -4,8 +4,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
-var apiv1Router = require("./routes/apiv1");
-var apiv2Router = require("./routes/apiv2");
+var apiRouter = require("./routes/api");
 
 var app = express();
 
@@ -27,7 +26,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/api/v1", apiv1Router);
-app.use("/api/v2", apiv2Router);
+app.use("/api", apiRouter);
 
 module.exports = app;

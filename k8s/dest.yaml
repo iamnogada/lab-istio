@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: backend # just name for resource
+spec:
+  host: backend # service name. add full fqdn if outside of namespace
+  subsets:
+    - name: v1 # subset name virtual service call in destination.subset
+      labels:
+        version: v1 # label of deployment.template.labels
+    - name: v2 # subset name virtual service call in destination.subset
+      labels:
+        version: v2 # label of deployment.template.labels

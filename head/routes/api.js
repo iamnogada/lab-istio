@@ -1,13 +1,13 @@
 var express = require("express");
 var router = express.Router();
-const _axios = require("axios");
+const axios = require("axios");
 
-const headInfo = {
-	kubeds: "disabled"
-};
-const axios = _axios.create({
-	headers: headInfo
-});
+// const headInfo = {
+// 	kubeds: "disabled"
+// };
+// const axios = _axios.create({
+// 	headers: headInfo
+// });
 
 /* Basic handler for this route */
 router.use((req, res, next) => {
@@ -15,13 +15,21 @@ router.use((req, res, next) => {
 	next();
 });
 
-router.post("/:endpoint/:port/:id", function(req, res, next) {
-	console.log(`Request with kubeds: ${headInfo.kubeds} in header`);
+router.post("/:version/:endpoint/:port/:id", function(req, res, next) {
+	const headers = {
+		kubeds: "disabled"
+	};
+
+	if ("v2" == req.params.version) {
+		headers.kubeds = "enabled";
+	}
+	console.log(`Request with kubeds: ${headers.kubeds} in header`);
 
 	const url = `http://${req.params.endpoint}:${req.params.port}/api/${req.params.id}`;
+	console.log(`Backend endpoint is ${url}`);
 
 	axios
-		.post(url, req.body)
+		.post(url, req.body, { headers })
 		.then(response => {
 			res.json({
 				...req.body,

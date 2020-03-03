@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kiali
+spec:
+  rules:
+    - host: kiali.192.168.64.21.nip.io
+      http:
+        paths:
+          - backend:
+              serviceName: kiali
+              servicePort: 20001
+            path: /
