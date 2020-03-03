@@ -1,0 +1,73 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kubepia
+spec:
+  rules:
+    - host: kubepia.192.168.64.21.nip.io
+      http:
+        paths:
+          - backend:
+              serviceName: head
+              servicePort: 80
+            path: /
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: head
+spec:
+  selector:
+    app: head
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: head
+  labels:
+    app: head
+spec:
+  selector:
+    matchLabels:
+      app: head
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      name: head
+      labels:
+        app: head
+    spec:
+      containers:
+        - name: head
+          image: kubepia/lab-istio-head:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8090
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 300m
+              memory: 500Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
